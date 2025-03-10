@@ -1,0 +1,25 @@
+name: update cloudformation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - bm_cfn.yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: update stack
+        env:
+          BE_SECRET: ${{ secrets.BE_SECRET }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          FE_SECRET: ${{ secrets.FE_SECRET }}
+          GUEST_LIST: ${{ secrets.GUEST_LIST }}
+          ROOT_DB_PASSWORD: ${{ secrets.ROOT_DB_PASSWORD }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt

@@ -8,16 +8,6 @@ packages:
   - nginx
   - python3-pip
 
-write_files:
-  - path: /etc/postgresql/14/main/postgresql.conf
-    content: listen_addresses = '*'
-    defer: true
-    append: true
-  - path: /etc/postgresql/14/main/pg_hba.conf
-    content: "host\tall\tall\t0.0.0.0/0\tmd5"
-    append: true
-    defer: true
-
 runcmd:
   # configure authentication for database to run in command line
   - cd /home/ubuntu
@@ -59,4 +49,3 @@ runcmd:
   - service postgresql restart
   - sudo -u ubuntu python3 -m gunicorn --worker-class uvicorn.workers.UvicornWorker --chdir /home/ubuntu/bm/backend/ --daemon main:app --error-logfile backend-error.log
   - nginx -s reload
-
