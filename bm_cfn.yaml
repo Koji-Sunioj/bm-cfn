@@ -47,4 +47,4 @@ Outputs:
   BMInstanceDNS:
     Description: Website URL
     Value: !GetAtt BMInstance.PublicDnsName
-# hello2s
+# hello2ss
