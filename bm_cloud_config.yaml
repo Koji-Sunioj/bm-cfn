@@ -1,0 +1,62 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - postgresql-14
+  - nginx
+  - python3-pip
+
+write_files:
+  - path: /etc/postgresql/14/main/postgresql.conf
+    content: listen_addresses = '*'
+    defer: true
+    append: true
+  - path: /etc/postgresql/14/main/pg_hba.conf
+    content: "host\tall\tall\t0.0.0.0/0\tmd5"
+    append: true
+    defer: true
+
+runcmd:
+  # configure authentication for database to run in command line
+  - cd /home/ubuntu
+  - sudo -u postgres psql -c "alter user postgres with password '${ROOT_DB_PASSWORD}';"
+  - echo 'localhost:5432:postgres:postgres:${ROOT_DB_PASSWORD}' >> .pgpass
+  - echo 'localhost:5432:blackmetal:postgres:${ROOT_DB_PASSWORD}' >> .pgpass
+  - chmod 0600 .pgpass
+  - export PGPASSFILE='/home/ubuntu/.pgpass'
+  # initalize database with table, functions, data
+  - curl -sSf https://atlasgo.sh | sh -s -- -y
+  - wget https://black-metal-666.s3.eu-north-1.amazonaws.com/init.tar.gz
+  - tar -xf init.tar.gz
+  - psql -h localhost -U postgres -c "create database blackmetal;"
+  - cat *.sql | psql -h localhost -d blackmetal -U postgres
+  - mv allows-ranges.conf /etc/nginx/
+  - rm init.tar.gz *.sql
+  - sed -i '/http {/a\\tinclude allows-ranges.conf;\n\tdeny all;' /etc/nginx/nginx.conf
+  - psql -h localhost -U postgres -c "alter user bm_admin with password '${DB_PASSWORD}';"
+  # initalize backend, frontend, nginx file
+  - git clone https://github.com/Koji-Sunioj/bm.git
+  # link front end to nginx directory, add photos
+  - ln -s /home/ubuntu/bm/frontend/ /var/www/bm
+  - chmod 755 /home/ubuntu
+  - mkdir /home/ubuntu/bm/frontend/common
+  - mv /home/ubuntu/photos/* /home/ubuntu/bm/frontend/common/
+  - rm -r /home/ubuntu/photos/
+  # link nginx file to nginx conf file
+  - rm /etc/nginx/sites-enabled/default
+  - ln -s /home/ubuntu/bm/nginx/bm.conf /etc/nginx/sites-available/bm.conf
+  - ln -s /etc/nginx/sites-available/bm.conf /etc/nginx/sites-enabled/bm.conf
+  # sync banckend with dependencies, initalize
+  - sudo -u ubuntu python3 -m pip install -r /home/ubuntu/bm/backend/requirements.txt
+  - echo "FE_SECRET=${FE_SECRET}
+  - DB_PASSWORD=${DB_PASSWORD}
+  - BE_SECRET=${BE_SECRET}
+  - GUEST_LIST=${GUEST_LIST}" > /home/ubuntu/bm/backend/.env
+  - chown -R ubuntu:ubuntu /home/ubuntu/bm
+  - chown ubuntu:ubuntu /home/ubuntu/.pgpass
+  - service postgresql restart
+  - sudo -u ubuntu python3 -m gunicorn --worker-class uvicorn.workers.UvicornWorker --chdir /home/ubuntu/bm/backend/ --daemon main:app --error-logfile backend-error.log
+  - nginx -s reload
+
