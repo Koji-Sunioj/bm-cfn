@@ -1,0 +1,42 @@
+name: initialization cloudformation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy stack if none with same name in region exists
+        run: |
+          BM_STACKS=$(aws cloudformation describe-stacks --stack-name bm-stack --region eu-north-1 | jq length)
+          if [[ $BM_STACKS == 0 ]] 
+          then 
+              echo "hey lets deploy"
+          elif [[ $BM_STACKS != 1 ]] 
+          then 
+              echo "hey lets deploy"
+          else 
+              echo "ok to deploy"
+              exit 1
+          fi
+      - uses: actions/checkout@v3
+      - name: initialize stack
+        env:
+          BE_SECRET: ${{ secrets.BE_SECRET }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          FE_SECRET: ${{ secrets.FE_SECRET }}
+          GUEST_LIST: ${{ secrets.GUEST_LIST }}
+          ROOT_DB_PASSWORD: ${{ secrets.ROOT_DB_PASSWORD }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          KEY_NAME: ${{ secrets.KEY_NAME }}
+        run: |
+          echo 'lets go'
+        #run: |
+        #  envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt
+        #  aws cloudformation create-stack --stack-name bm-stack --template-body file://bm_cfn.yaml \
+        #  --parameters ParameterKey=KeyName,ParameterValue=$KEY_NAME \
+        #  ParameterKey=CloudConfig,ParameterValue=$(cat b64_payload.txt) \
+        #  --output text --region eu-north-1
