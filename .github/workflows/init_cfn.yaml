@@ -1,10 +1,10 @@
-name: initialization cloudformation
+name: initialize cloudformation
 
 on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  initialize:
     runs-on: ubuntu-latest
     steps:
       - name: deploy stack if none with same name in region exists
