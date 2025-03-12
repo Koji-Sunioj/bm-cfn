@@ -8,6 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: deploy stack if none with same name in region exists
+        env:
+          BE_SECRET: ${{ secrets.BE_SECRET }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          FE_SECRET: ${{ secrets.FE_SECRET }}
+          GUEST_LIST: ${{ secrets.GUEST_LIST }}
+          ROOT_DB_PASSWORD: ${{ secrets.ROOT_DB_PASSWORD }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          KEY_NAME: ${{ secrets.KEY_NAME }}
         run: |
           BM_STACKS=$(aws cloudformation describe-stacks --stack-name bm-stack --region eu-north-1 | jq length)
           if [[ $BM_STACKS == 0 ]] 
@@ -22,18 +32,10 @@ jobs:
           fi
       - uses: actions/checkout@v3
       - name: initialize stack
-        env:
-          BE_SECRET: ${{ secrets.BE_SECRET }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          FE_SECRET: ${{ secrets.FE_SECRET }}
-          GUEST_LIST: ${{ secrets.GUEST_LIST }}
-          ROOT_DB_PASSWORD: ${{ secrets.ROOT_DB_PASSWORD }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          KEY_NAME: ${{ secrets.KEY_NAME }}
         run: |
           echo 'lets go'
+          envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt
+          aws s3api put-object --bucket black-metal-666 --key b64_o.txt --body b64_o.txt
         #run: |
         #  envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt
         #  aws cloudformation create-stack --stack-name bm-stack --template-body file://bm_cfn.yaml \
