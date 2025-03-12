@@ -2,6 +2,9 @@ Parameters:
   CloudConfig:
     Description: Cloud config base64 string.
     Type: String
+  KeyName:
+    Description: Name of key from secret
+    Type: String
 
 Resources:
   BMInstance:
@@ -47,5 +50,3 @@ Outputs:
   BMInstanceDNS:
     Description: Website URL
     Value: !GetAtt BMInstance.PublicDnsName
-# hello2ss
-# asdasd
