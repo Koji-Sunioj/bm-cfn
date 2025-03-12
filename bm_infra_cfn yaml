@@ -1,21 +1,9 @@
 Parameters:
-  CloudConfig:
-    Description: Cloud config base64 string.
-    Type: String
-  KeyName:
-    Description: Name of key from secret
+  BMInstanceDnsName:
+    Description: EC2 Instance DNS
     Type: String
 
 Resources:
-  BMInstance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-057b0e5f4e7564dab
-      SecurityGroups:
-        - black_metal
-      InstanceType: t4g.nano
-      KeyName: !Ref KeyName
-      UserData: !Ref CloudConfig
   BMDistribution:
     Type: AWS::CloudFront::Distribution
     DependsOn: BMInstance
@@ -25,7 +13,7 @@ Resources:
         IPV6Enabled: true
         HttpVersion: http2
         Origins:
-          - DomainName: !GetAtt BMInstance.PublicDnsName
+          - DomainName: !Ref BMInstanceDnsName
             Id: 123
             CustomOriginConfig:
               HTTPPort: 80
@@ -45,8 +33,3 @@ Resources:
             - PATCH
           OriginRequestPolicyId: 216adef6-5c7f-47e4-b989-5492eafa07d3
           CachePolicyId: 83da9c7e-98b4-4e11-a168-04f0df8e2c65
-
-Outputs:
-  BMInstanceDNS:
-    Description: Website URL
-    Value: !GetAtt BMInstance.PublicDnsName

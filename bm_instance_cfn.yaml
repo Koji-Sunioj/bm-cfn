@@ -1,0 +1,23 @@
+Parameters:
+  CloudConfig:
+    Description: Cloud config base64 string.
+    Type: String
+  KeyName:
+    Description: Name of key from secret
+    Type: String
+
+Resources:
+  BMInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-057b0e5f4e7564dab
+      SecurityGroups:
+        - black_metal
+      InstanceType: t4g.nano
+      KeyName: !Ref KeyName
+      UserData: !Ref CloudConfig
+
+Outputs:
+  BMInstanceDNS:
+    Description: Website URL
+    Value: !GetAtt BMInstance.PublicDnsName

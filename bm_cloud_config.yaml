@@ -28,6 +28,7 @@ runcmd:
   - psql -h localhost -U postgres -c "alter user bm_admin with password '${DB_PASSWORD}';"
   # initalize backend, frontend, nginx file
   - git clone https://github.com/Koji-Sunioj/bm.git
+  - psql -U postgres -h localhost -a -d blackmetal -f /home/ubuntu/bm/db/functions.sql
   # link front end to nginx directory, add photos
   - ln -s /home/ubuntu/bm/frontend/ /var/www/bm
   - chmod 755 /home/ubuntu

@@ -1,0 +1,36 @@
+name: update cloudformation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - bm_infra_cfn.yaml
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: run update only if stack exists
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          BM_INFRA_STACKS=$(aws cloudformation describe-stacks --stack-name bm-infra-stack --region eu-north-1 | jq length)
+          if [[ $BM_INFRA_STACKS == 1 ]] 
+          then 
+              echo "proceed with update"
+          else 
+              echo "that stack does not exist"
+              exit 1
+          fi
+      - uses: actions/checkout@v3
+      - name: update stack
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo 'hello'
+        # aws cloudformation update-stack --stack-name bm-stack --template-body file://bm_cfn.yaml --region eu-north-1 \
+        #--output text
