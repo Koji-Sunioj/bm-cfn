@@ -11,7 +11,7 @@ Resources:
       SecurityGroups:
         - black_metal
       InstanceType: t4g.nano
-      KeyName: sharmuta
+      KeyName: !Ref KeyName
       UserData: !Ref CloudConfig
   BMDistribution:
     Type: AWS::CloudFront::Distribution
