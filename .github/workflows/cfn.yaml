@@ -7,21 +7,11 @@ on:
     paths:
       - bm_cfn.yaml
   workflow_dispatch:
-    inputs:
-      action:
-        description: "the key to trigger the workflow"
-        required: true
-        type: string
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Fail if branch is not main
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.action != 'update-cfn'
-        run: |
-          echo "a manual update to cloudformation is triggered with 'update-cfn'"
-          exit 1
       - uses: actions/checkout@v3
       - name: update stack
         env:
