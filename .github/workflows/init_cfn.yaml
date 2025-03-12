@@ -35,7 +35,7 @@ jobs:
         run: |
           echo 'lets go'
           envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt
-          aws s3api put-object --bucket black-metal-666 --key b64_o.txt --body b64_o.txt
+          aws s3api put-object --bucket black-metal-666 --key b64_payload.txt --body b64_payload.txt
         #run: |
         #  envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt
         #  aws cloudformation create-stack --stack-name bm-stack --template-body file://bm_cfn.yaml \
