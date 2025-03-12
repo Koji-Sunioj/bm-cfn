@@ -27,7 +27,7 @@ jobs:
           then 
               echo "hey lets deploy"
           else 
-              echo "ok to deploy"
+              echo "that stack exists"
               exit 1
           fi
       - uses: actions/checkout@v3
