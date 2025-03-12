@@ -25,6 +25,6 @@ jobs:
         run: |
           envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt
           aws cloudformation create-stack --stack-name bm-stack --template-body file://bm_cfn.yaml \ 
-          --parameters ParameterKey=KeyName,ParameterValue=$KEY_NAME \ 
-          ParameterKey=CloudConfig,ParameterValue=$(cat b64_payload.txt) \ 
-          --output string --region eu-north-1
+            --parameters ParameterKey=KeyName,ParameterValue=$KEY_NAME \ 
+            ParameterKey=CloudConfig,ParameterValue=$(cat b64_payload.txt) \ 
+            --output string --region eu-north-1
