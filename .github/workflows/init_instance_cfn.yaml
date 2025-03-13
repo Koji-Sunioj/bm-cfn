@@ -36,6 +36,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           KEY_NAME: ${{ secrets.KEY_NAME }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh secret set MYSECRET --repo origin/bm --body "123"
 
