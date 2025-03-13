@@ -6,6 +6,8 @@ on:
 jobs:
   initialize:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: deploy check if instance exists first
         env:
@@ -26,9 +28,11 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
           BM_INSTANCE_DNS=$(aws cloudformation describe-stacks --stack-name bm-instance-stack --query Stacks[0].Outputs \
           | jq 'map(select(.OutputKey | contains("BMInstanceDNS")))' | jq first.OutputValue | sed "s/\"//g")
+          gh secret set BM_INSTANCE_DNS --repo Koji-Sunioj/bm --body "$BM_INSTANCE_DNS"
           aws cloudformation create-stack --stack-name bm-infra-stack --template-body file://bm_infra_cfn.yaml \
           --parameters ParameterKey=BMInstanceDnsName,ParameterValue=$BM_INSTANCE_DNS \
           --output text --region eu-north-1
