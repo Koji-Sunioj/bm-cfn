@@ -38,7 +38,7 @@ jobs:
           KEY_NAME: ${{ secrets.KEY_NAME }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh secret set MYSECRET --repo origin/bm --body "123"
+          gh secret set MYSECRET --repo Koji-Sunioj/bm --body "123"
 
 #          envsubst < bm_cloud_config.yaml | base64 -w0 > b64_payload.txt
 #          aws cloudformation create-stack --stack-name bm-instance-stack --template-body file://bm_instance_cfn.yaml \
