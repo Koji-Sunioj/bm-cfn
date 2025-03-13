@@ -7,7 +7,7 @@ jobs:
   initialize:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      id-token: write
     steps:
       - name: deploy ec2 if none with same name in region exists
         env:
