@@ -30,9 +30,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
-          BM_INSTANCE_DNS=$(aws cloudformation describe-stacks --stack-name bm-instance-stack --query Stacks[0].Outputs \
+          BM_INSTANCE_DNS=$(aws cloudformation describe-stacks --stack-name bm-instance-stack \
+          --query Stacks[0].Outputs -region eu-north-1 \
           | jq 'map(select(.OutputKey | contains("BMInstanceDNS")))' | jq first.OutputValue | sed "s/\"//g")
-          gh secret set BM_INSTANCE_DNS --repo Koji-Sunioj/bm --body "$BM_INSTANCE_DNS"
+          gh secret set EC2_HOST --repo Koji-Sunioj/bm --body "$BM_INSTANCE_DNS"
           aws cloudformation create-stack --stack-name bm-infra-stack --template-body file://bm_infra_cfn.yaml \
           --parameters ParameterKey=BMInstanceDnsName,ParameterValue=$BM_INSTANCE_DNS \
           --output text --region eu-north-1
