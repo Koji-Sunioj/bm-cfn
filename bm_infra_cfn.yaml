@@ -6,7 +6,6 @@ Parameters:
 Resources:
   BMDistribution:
     Type: AWS::CloudFront::Distribution
-    DependsOn: BMInstance
     Properties:
       DistributionConfig:
         Enabled: true
