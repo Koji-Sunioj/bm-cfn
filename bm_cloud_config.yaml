@@ -41,10 +41,7 @@ runcmd:
   - ln -s /etc/nginx/sites-available/bm.conf /etc/nginx/sites-enabled/bm.conf
   # sync banckend with dependencies, initalize
   - sudo -u ubuntu python3 -m pip install -r /home/ubuntu/bm/backend/requirements.txt
-  - echo "FE_SECRET=${FE_SECRET}
-  - DB_PASSWORD=${DB_PASSWORD}
-  - BE_SECRET=${BE_SECRET}
-  - GUEST_LIST=${GUEST_LIST}" > /home/ubuntu/bm/backend/.env
+  - echo $BACKEND_ENV | base64 -d > /home/ubuntu/bm/backend/.env
   - chown -R ubuntu:ubuntu /home/ubuntu/bm
   - chown ubuntu:ubuntu /home/ubuntu/.pgpass
   - service postgresql restart
