@@ -1,6 +1,6 @@
 # What is this
 
-... a collection of Cloudformation templates, Github action jobs, and Cloud-init instance initalization file, which done in sequence will bootstrap a fullstack application on EC2 with cloudfront as a proxy. More features coming soon to integrate other AWS services with full stack application.
+... a collection of Cloudformation templates, Github action jobs, and Cloud-init instance initalization file, which done in sequence will bootstrap a fullstack application on EC2 with cloudfront as a proxy.
 
 ## Cool things
 
@@ -13,3 +13,5 @@
 ## Why
 
 I used to use AWS CDK, but since that outputs Cloudformation templates I thought it's better to use Cloudformation. Also the latter is a lot more compact to use, and no need to use npm or node.js. Then combining that with Github actions to learn how they can work together.
+
+In a nutshell: just checking out how to bootstrap a full stack app on AWS with Cloudformation.

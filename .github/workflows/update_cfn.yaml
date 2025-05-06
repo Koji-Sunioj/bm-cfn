@@ -31,6 +31,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          echo 'hello'
-        # aws cloudformation update-stack --stack-name bm-stack --template-body file://bm_cfn.yaml --region eu-north-1 \
-        #--output text
+          aws cloudformation update-stack --stack-name bm-stack --template-body file://bm_cfn.yaml --region eu-north-1 --output text
