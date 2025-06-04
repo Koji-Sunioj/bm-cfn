@@ -45,5 +45,5 @@ runcmd:
   - chown -R ubuntu:ubuntu /home/ubuntu/bm
   - chown ubuntu:ubuntu /home/ubuntu/.pgpass
   - service postgresql restart
-  - sudo -u ubuntu python3 -m gunicorn --worker-class uvicorn.workers.UvicornWorker --chdir /home/ubuntu/bm/backend/ --daemon main:app --error-logfile backend-error.log
+  - sudo -u ubuntu python3 -m gunicorn --worker-class uvicorn.workers.UvicornWorker --chdir /home/ubuntu/bm/backend/ --daemon main:app --error-logfile backend-error.log --access-logfile backend-access.log
   - nginx -s reload
